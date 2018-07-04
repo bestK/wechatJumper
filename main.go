@@ -51,7 +51,7 @@ func JDRender(w http.ResponseWriter, r *http.Request) {
 	} else {
 		u := strings.Split(jdUrl, ":")
 		jdRurl := url.QueryEscape(u[1])
-		reqUrl := "https://api.jd.com/routerjson?access_token=" + conf().access_token + "&app_key=" + conf().app_key + "&method=" + conf().method + "&v=2.0&sign=" + conf().sgin + "&timestamp=" + string(time.Now().Unix())
+		reqUrl := JDApi()
 		data := url.Values{"jump": {"0"}, "rurl": {url.QueryEscape("http://dc2.jd.com/auto.php?service=transfer&type=pms&to=" + jdRurl + "&openlink=1")}}
 		body := strings.NewReader(data.Encode())
 		clt := http.Client{}
@@ -73,4 +73,12 @@ func JDRender(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Print("\r\n访问者ip：" + r.Header.Get("X-Real-Ip") + strings.Split(r.RemoteAddr, ":")[0])
 
+}
+
+func JDApi() string {
+	return "https://api.jd.com/routerjson?access_token=" + conf().access_token +
+		   "&app_key=" + conf().app_key +
+		   	"&method=" + conf().method +
+				"&v=2.0&sign=" + conf().sgin +
+					"&timestamp=" + string(time.Now().Unix())
 }
