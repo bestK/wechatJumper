@@ -1,5 +1,11 @@
 package main
 
+/**
+	@author： ECH2O
+	@time： 2018-7-4 14:37:14
+	@tip： access_token 有效期限为一年
+ */
+
 import (
 	"net/http"
 	"fmt"
@@ -7,6 +13,7 @@ import (
 	"strings"
 	"io/ioutil"
 	"encoding/json"
+	"time"
 )
 
 func main() {
@@ -14,6 +21,22 @@ func main() {
 	http.HandleFunc("/openlink", JDRender)
 
 	http.ListenAndServe(":8989", nil);
+}
+
+type JDConfig struct {
+	access_token string
+	app_key      string
+	method       string
+	sgin         string
+}
+
+func conf() JDConfig {
+	return JDConfig{
+		"d485f611-7d1f-49d5-97a9-d5ac5450c659",
+		"8E76F960FE21B40A83B167F22223759C",
+		"jingdong.wxsq.mjgj.link.GetOpenLink",
+		"35D5AA4F312FD08D8070B951105A8D9C",
+	}
 }
 
 func JDRender(w http.ResponseWriter, r *http.Request) {
@@ -28,8 +51,7 @@ func JDRender(w http.ResponseWriter, r *http.Request) {
 	} else {
 		u := strings.Split(jdUrl, ":")
 		jdRurl := url.QueryEscape(u[1])
-		fmt.Print()
-		reqUrl := "https://api.jd.com/routerjson?access_token=d485f611-7d1f-49d5-97a9-d5ac5450c659&app_key=8E76F960FE21B40A83B167F22223759C&method=jingdong.wxsq.mjgj.link.GetOpenLink&v=2.0&sign=35D5AA4F312FD08D8070B951105A8D9C&timestamp=2018-07-03%2014%3A54%3A45"
+		reqUrl := "https://api.jd.com/routerjson?access_token=" + conf().access_token + "&app_key=" + conf().app_key + "&method=" + conf().method + "&v=2.0&sign=" + conf().sgin + "&timestamp=" + string(time.Now().Unix())
 		data := url.Values{"jump": {"0"}, "rurl": {url.QueryEscape("http://dc2.jd.com/auto.php?service=transfer&type=pms&to=" + jdRurl + "&openlink=1")}}
 		body := strings.NewReader(data.Encode())
 		clt := http.Client{}
