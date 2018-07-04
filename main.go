@@ -49,13 +49,11 @@ func JDRender(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, errInfo)
 		return
 	} else {
-		u := strings.Split(jdUrl, ":")
-		jdRurl := url.QueryEscape(u[1])
-		reqUrl := JDApi()
+		jdRurl := url.QueryEscape(strings.Split(jdUrl, ":")[1])
 		data := url.Values{"jump": {"0"}, "rurl": {url.QueryEscape("http://dc2.jd.com/auto.php?service=transfer&type=pms&to=" + jdRurl + "&openlink=1")}}
 		body := strings.NewReader(data.Encode())
 		clt := http.Client{}
-		resp, err := clt.Post(reqUrl, "application/x-www-form-urlencoded", body)
+		resp, err := clt.Post(JDApi(), "application/x-www-form-urlencoded", body)
 		if err != nil {
 			fmt.Print(err.Error())
 			return
